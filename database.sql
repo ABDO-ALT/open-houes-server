@@ -16,4 +16,4 @@ CREATE TABLE clients (
     gender    VARCHAR
 );
 -- To create informations use (INSERT) Whatch out use big letter
-INSERT INTO clients (first_name,last_name, email, city,phone_number,user_type,gender) VALUES ('said','belal','j.smith@johnsmith.org','barcelona','+34 671295766','guest','male')
+INSERT INTO clients (first_name,last_name, email, city,phone_number,user_type,gender) VALUES ('said','belal','j.smith@johnsmith.org','barcelona','+34 671295766','guest','male');

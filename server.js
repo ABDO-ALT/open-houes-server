@@ -2,7 +2,10 @@ const express = require("express");
 const app = express();
 const { Pool } = require("pg");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const secret = require("./secret");
+app.use(cors());
+
 
 app.use(bodyParser.json());
 const pool = new Pool({

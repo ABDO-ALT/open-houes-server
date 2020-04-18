@@ -1,9 +1,7 @@
 -- To create now database  opject
-createdb
-open-house  - -u postgres
+createdb open_house  - -u postgres
 --To entey your database opject 
-qspl
-open-house - -u postgres
+qspl open_house - -u postgres
 --Whatch out delete space between tow dash at the letter (u) 
 
 -- For create a table  
@@ -17,10 +15,11 @@ CREATE TABLE clients
     phone_number VARCHAR UNIQUE,
     age   DATE,
     user_type VARCHAR NOT NULL,
-    gender VARCHAR
+    gender VARCHAR,
+    password VARCHAR NOT NULL
 );
 -- To create informations use (INSERT) Whatch out use big letter
 INSERT INTO clients
-    (first_name,last_name, email, city,phone_number,user_type,gender)
+    (first_name,last_name, email, city,age,phone_number,user_type,gender,password)
 VALUES
-    ('said', 'belal', 'j.smith@johnsmith.org', 'barcelona', '+34 671295766', 'guest', 'male');
+    ('said', 'belal', 'j.smith@johnsmith.org','1990-09-01', 'barcelona', '+34 671295766', 'guest', 'male','200020020');

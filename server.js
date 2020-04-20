@@ -4,14 +4,16 @@ const { Pool } = require("pg");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const secret = require("./secret");
-app.use(cors());
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
+app.use(cors());
 
 app.use(bodyParser.json());
 const pool = new Pool({
   user: "postgres",
   host: "localhost",
-  database: "open-house",
+  database: "open_house",
   password: secret.dbPassword,
   port: 5432,
 });
@@ -37,20 +39,26 @@ function createNewuser(pool, req) {
   const newAge = req.body.age;
   const newUser_type = req.body.user_type;
   const newGenber = req.body.gender;
-  //first_name,last_name, email, city,phone_number,user_type,gender
-  const query =
-    "INSERT INTO clients(first_name,last_name, email, city,phone_number,age,user_type,gender) VALUES ($1, $2, $3, $4,$5, $6 ,$7,$8)";
-  return pool.query(query, [
-    newFirstName,
-    newLast_name,
-    newEmail,
-    newCity,
-    newPhone_number,
-    newAge,
-    newUser_type,
-    newGenber,
-  ]);
+  let newPassword = req.body.password;
+
+  return bcrypt.hash(newPassword, saltRounds).then(function (hash) {
+    //console.log(hash);
+    const query =
+      "INSERT INTO clients(first_name,last_name, email, city,phone_number,age,user_type,gender,password) VALUES ($1, $2, $3, $4,$5, $6 ,$7,$8,$9)";
+    return pool.query(query, [
+      newFirstName,
+      newLast_name,
+      newEmail,
+      newCity,
+      newPhone_number,
+      newAge,
+      newUser_type,
+      newGenber,
+      hash,
+    ]);
+  });
 }
+//first_name,last_name, email, city,phone_number,user_type,gender
 
 app.post("/clients", function (req, res) {
   createNewuser(pool, req)

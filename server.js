@@ -42,7 +42,6 @@ function createNewuser(pool, req) {
   let newPassword = req.body.password;
 
   return bcrypt.hash(newPassword, saltRounds).then(function (hash) {
-    //console.log(hash);
     const query =
       "INSERT INTO clients(first_name,last_name, email, city,phone_number,age,user_type,gender,password) VALUES ($1, $2, $3, $4,$5, $6 ,$7,$8,$9)";
     return pool.query(query, [
@@ -60,6 +59,7 @@ function createNewuser(pool, req) {
 }
 //first_name,last_name, email, city,phone_number,user_type,gender
 
+//Mew route
 app.post("/clients", function (req, res) {
   createNewuser(pool, req)
     .then(() => {
@@ -67,6 +67,32 @@ app.post("/clients", function (req, res) {
     })
     .catch(() => {
       res.status(500).send("There was some");
+    });
+});
+
+app.post("/login", function (req, res) {
+  //get email and password from request body
+  const Email = req.body.email;
+  const Password = req.body.password;
+
+  //get old hash password from database
+  pool
+    .query(`SELECT "password" FROM clients where email = '${Email}'`)
+    // compare old hash password with new password
+    .then((result) => {
+      if (result.rows.length == 0) {
+        res.status(404).send("don't exist");
+      } else {
+        console.log(result.rows[0].password);
+        bcrypt
+          .compare(Password, result.rows[0].password)
+          .then(function (result) {
+            console.log("first", result);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
     });
 });
 

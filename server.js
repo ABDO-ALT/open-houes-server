@@ -88,9 +88,16 @@ app.post("/login", function (req, res) {
           .compare(Password, result.rows[0].password)
           .then(function (result) {
             console.log("first", result);
+            if (result) {
+              //console.log("👏🏻");
+              res.status(200).send("It's Match ");
+            } else {
+              // console.log("😢");
+              res.status(401).send("It's Not Match");
+            }
           })
           .catch(function (error) {
-            console.log(error);
+            res.status(500).send("Refresh your page");
           });
       }
     });

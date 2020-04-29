@@ -81,7 +81,7 @@ app.post("/login", function (req, res) {
     // compare old hash password with new password
     .then((result) => {
       if (result.rows.length == 0) {
-        res.status(404).send("don't exist");
+        res.status(404).send(" your email don't exist");
       } else {
         console.log(result.rows[0].password);
         bcrypt
@@ -93,11 +93,11 @@ app.post("/login", function (req, res) {
               res.status(200).send("It's Match ");
             } else {
               // console.log("😢");
-              res.status(401).send("It's Not Match");
+              res.status(401).send(" Your password It's Not Match");
             }
           })
           .catch(function (error) {
-            res.status(500).send("Refresh your page");
+            res.status(500).send(error,"Refresh your page");
           });
       }
     });

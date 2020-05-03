@@ -34,7 +34,7 @@ function createNewuser(pool, req) {
   const newFirstName = req.body.first_name;
   const newLast_name = req.body.last_name;
   const newEmail = req.body.email;
-  const newCity = req.body.city;
+  const newcountry = req.body.country;
   const newPhone_number = req.body.phone_number;
   const newAge = req.body.age;
   const newUser_type = req.body.user_type;
@@ -43,12 +43,12 @@ function createNewuser(pool, req) {
 
   return bcrypt.hash(newPassword, saltRounds).then(function (hash) {
     const query =
-      "INSERT INTO clients(first_name,last_name, email, city,phone_number,age,user_type,gender,password) VALUES ($1, $2, $3, $4,$5, $6 ,$7,$8,$9)";
+      "INSERT INTO clients(first_name,last_name, email, country,phone_number,age,user_type,gender,password) VALUES ($1, $2, $3, $4,$5, $6 ,$7,$8,$9)";
     return pool.query(query, [
       newFirstName,
       newLast_name,
       newEmail,
-      newCity,
+      newcountry,
       newPhone_number,
       newAge,
       newUser_type,
@@ -57,7 +57,7 @@ function createNewuser(pool, req) {
     ]);
   });
 }
-//first_name,last_name, email, city,phone_number,user_type,gender
+//first_name,last_name, email, country,phone_number,user_type,gender
 
 //Mew route
 app.post("/clients", function (req, res) {
@@ -65,8 +65,9 @@ app.post("/clients", function (req, res) {
     .then(() => {
       res.status(201).send("created");
     })
-    .catch(() => {
-      res.status(500).send("There was some");
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Your email or phone number already exists");
     });
 });
 
@@ -77,27 +78,40 @@ app.post("/login", function (req, res) {
 
   //get old hash password from database
   pool
-    .query(`SELECT "password" FROM clients where email = '${Email}'`)
+    .query(
+      `SELECT password, id, first_name FROM clients where email = '${Email}'`
+    )
+
     // compare old hash password with new password
     .then((result) => {
       if (result.rows.length == 0) {
-        res.status(404).send(" your email don't exist");
+        res.status(404).send(" your email doesn't exists");
       } else {
-        console.log(result.rows[0].password);
+        const user = result.rows[0];
+
+        console.log("user logging in: ", user);
         bcrypt
-          .compare(Password, result.rows[0].password)
+          .compare(Password, user.password)
           .then(function (result) {
             console.log("first", result);
             if (result) {
-              //console.log("👏🏻");
-              res.status(200).send("It's Match ");
+              // WHAT IF I SEND THE USER DATA TO THE CLIENT??
+              // (including id, name, etc.)
+              // send `user` as json!!
+              // (could take out password)
+              const userData = { id: user.id, first_name: user.first_name };
+
+              // send (as JSON) userData to client.
+              console.log(userData);
+
+              res.json(userData).status(200);
             } else {
               // console.log("😢");
               res.status(401).send(" Your password It's Not Match");
             }
           })
           .catch(function (error) {
-            res.status(500).send(error,"Refresh your page");
+            res.status(500).send(error, "Refresh your page");
           });
       }
     });

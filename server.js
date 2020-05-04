@@ -63,7 +63,10 @@ function createNewuser(pool, req) {
 app.post("/clients", function (req, res) {
   createNewuser(pool, req)
     .then(() => {
-      res.status(201).send("created");
+      console.log(req.body);
+      const userData = {first_name:req.body.first_name,user_type:req.body.user_type}
+      res.json(userData).status(200);
+      //res.status(201).send("created");
     })
     .catch((err) => {
       console.log(err);
@@ -79,7 +82,7 @@ app.post("/login", function (req, res) {
   //get old hash password from database
   pool
     .query(
-      `SELECT password, id, first_name FROM clients where email = '${Email}'`
+      `SELECT password, id, user_type ,first_name FROM clients where email = '${Email}'`
     )
 
     // compare old hash password with new password
@@ -99,7 +102,11 @@ app.post("/login", function (req, res) {
               // (including id, name, etc.)
               // send `user` as json!!
               // (could take out password)
-              const userData = { id: user.id, first_name: user.first_name };
+              const userData = {
+                id: user.id,
+                first_name: user.first_name,
+                user_type: user.user_type,
+              };
 
               // send (as JSON) userData to client.
               console.log(userData);

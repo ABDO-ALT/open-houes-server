@@ -30,7 +30,8 @@ app.get("/clients", (req, res) => {
 app.post("/", function (req, res) {
   res.send("Post request to the postman");
 });
-function createNewuser(pool, req) {
+function createNewuser(pool, req) 
+{
   const newFirstName = req.body.first_name;
   const newLast_name = req.body.last_name;
   const newEmail = req.body.email;
@@ -41,7 +42,8 @@ function createNewuser(pool, req) {
   const newGenber = req.body.gender;
   let newPassword = req.body.password;
 
-  return bcrypt.hash(newPassword, saltRounds).then(function (hash) {
+  return bcrypt.hash(newPassword, saltRounds).then(function (hash) 
+  {
     //console.log(hash);
     const query =
       "INSERT INTO clients(first_name,last_name, email, city,phone_number,age,user_type,gender,password) VALUES ($1, $2, $3, $4,$5, $6 ,$7,$8,$9)";

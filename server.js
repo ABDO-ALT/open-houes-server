@@ -64,7 +64,10 @@ app.post("/clients", function (req, res) {
   createNewuser(pool, req)
     .then(() => {
       console.log(req.body);
-      const userData = {first_name:req.body.first_name,user_type:req.body.user_type}
+      const userData = {
+        first_name: req.body.first_name,
+        user_type: req.body.user_type,
+      };
       res.json(userData).status(200);
       //res.status(201).send("created");
     })
@@ -122,6 +125,63 @@ app.post("/login", function (req, res) {
           });
       }
     });
+});
+app.post("/rooms", function (req, res) {
+  // console.log('aaaareq',req);
+  // console.log("aaaares", res);
+
+  // clientsId
+  const ClientsId = req.body.clients_id;
+  const StartDate = req.body.start_date;
+  const EndDate = req.body.end_date;
+  const City = req.body.city;
+  const query =
+    "INSERT INTO rooms(clients_id,start_date, end_date,city) VALUES ($1, $2, $3,$4)";
+  console.log(pool.query);
+  pool
+    .query(query, [ClientsId, StartDate, EndDate, City])
+    .then((result) => {
+      console.log("created", result);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
+
+
+function getRooms(req, res) {
+
+  pool
+    .query(
+      "SELECT * FROM clients c2  INNER JOIN rooms  ON c2.id = rooms.clients_id ;"
+    )
+    .then((result) => {
+      console.log(result);
+      res.json(result.rows);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
+//function getRoomsForUser(req, res) {
+
+//}
+
+app.get("/rooms", function (req, res) {
+  
+  // ADD query params
+  // host will make query for only his rooms:   /rooms?userId=foobar
+  // OR
+  // guests will make query:   /rooms
+
+  // IF query param userId exists
+  // call getRoomsForuser(req, res)
+
+  // ELSE
+  // call getRooms(req, res)
+  
+  getRooms(req, res)
 });
 
 app.listen(5000, function () {
